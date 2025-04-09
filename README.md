@@ -1,4 +1,4 @@
-# Intune Buddy
+![intunebuddylogo](https://github.com/user-attachments/assets/c6484b63-0652-4772-b28b-24635d7e29e9)
 
 **Intune Buddy** is a simple documentation chatbot that helps you find answers about [Intune](https://learn.microsoft.com/intune).  
 It uses local Intune documentation files and a lightweight AI model to answer your questions accurately.
@@ -68,6 +68,27 @@ intune-buddy --model <model-name>
 - It will not invent answers or guess things not in the docs.
 - If the information isn’t found, it will tell you.
 - It automatically updates the vector database when Intune documentation changes.
+
+---
+
+## 🤖 What’s Going on Behind the Scenes?
+
+When you run Intune Buddy or Munki Buddy, a lot happens automatically to give you a smooth experience:
+1.	Documentation Sync
+    - The chatbot checks if the documentation repository (MunkiDocs/ or IntuneDocs/) exists.
+    - If not, it clones the official documentation from GitHub.
+    - If it already exists, it pulls the latest changes to ensure you always have up-to-date docs.
+2.	Document Indexing
+    - It hashes the documentation files to detect what has changed.
+    - Only new or updated files are split into chunks and added to the vector database.
+    -	This makes it fast and avoids rebuilding everything unnecessarily.
+3.	Vector Database (Chroma)
+    -	The text chunks are embedded using an embedding model (mxbai-embed-large via Ollama).
+    -	A vector database is created and updated, allowing the chatbot to search your documentation efficiently.
+4.	Question Handling
+    -	When you ask a question, the chatbot first retrieves the most relevant documentation chunks.
+    -	It then feeds your question plus the retrieved content into a locally running language model (Gemma 3B or 12B).
+    -	The model generates a complete answer based only on what is found in the official documentation.
 
 ---
 
