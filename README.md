@@ -74,6 +74,17 @@ intune-buddy --model <model-name>
 - It will not invent answers or guess things not in the docs.
 - If the information isn’t found, it will tell you.
 - It automatically updates the vector database when Intune documentation changes.
+- 
+Remember: **the chatbot is only as good as the documentation it is trained on**.
+
+- If the official documentation is **poorly structured** or **contains incorrect information**, the chatbot will also provide **poor or incorrect results**.
+- **Garbage in, garbage out**: If you provide a poorly worded question, lacking important details, the chatbot might not be able to give you a good or accurate answer.
+
+For best results:
+- Ask **clear and specific questions**.
+- Understand that the chatbot **only knows what the documentation contains** – it cannot "make up" information or correct mistakes from the source material.
+
+Thanks for understanding! 🙌
 
 ---
 
