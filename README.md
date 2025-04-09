@@ -23,6 +23,12 @@ It uses local Intune documentation files and a lightweight AI model to answer yo
 
 ---
 
+## :clapper: Demo
+
+https://github.com/user-attachments/assets/52dadf3f-ee20-46c9-b92e-dd060d928ed7
+
+---
+
 ## 🚀 Requirements
 
 - Python 3.9+
