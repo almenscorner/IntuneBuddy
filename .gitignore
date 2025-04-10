@@ -175,3 +175,6 @@ cython_debug/
 
 # General
 .DS_Store
+chroma_db/
+IntuneDocs/
+file_index.json

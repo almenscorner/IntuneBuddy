@@ -1,10 +1,12 @@
 import os
 import subprocess
 import json
+import sys
 import hashlib
 
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
+from rich import print
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from rich.progress import (
@@ -15,6 +17,8 @@ from rich.progress import (
     TimeElapsedColumn,
 )
 
+sys.path.insert(0, os.path.dirname(__file__))
+
 # Setup
 db_location = os.path.join(os.path.dirname(__file__), "chroma_db")
 index_file = os.path.join(os.path.dirname(__file__), "file_index.json")
@@ -24,6 +28,55 @@ text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1500,
     chunk_overlap=100,
 )
+
+
+def download_vector_store():
+    """Download pre-built vector store from GitHub."""
+    download = (
+        input(
+            "\n📦 Vector store not found. Do you want to download it from GitHub? (y/n): "
+        )
+        .strip()
+        .lower()
+    )
+    if download == "y":
+        curl_cmd = [
+            "curl",
+            "-L",
+            "-o",
+            "/tmp/IntuneBuddy.zip",
+            "https://github.com/almenscorner/dummy/releases/download/v0.0.1/vector_store.zip",
+        ]
+        subprocess.run(curl_cmd, check=True)
+        # Unzip the downloaded file
+        unzip_cmd = ["unzip", "/tmp/IntuneBuddy.zip", "-d", "/tmp/IntuneBuddy"]
+        subprocess.run(unzip_cmd, check=True, capture_output=True)
+        # Move the vector store to the current directory
+        move_cmd = [
+            "mv",
+            "/tmp/IntuneBuddy/chroma_db",
+            os.path.join(os.path.dirname(__file__), "chroma_db"),
+        ]
+        subprocess.run(move_cmd, check=True)
+        # Move file_index.json to the current directory
+        move_cmd = [
+            "mv",
+            "/tmp/IntuneBuddy/file_index.json",
+            os.path.join(os.path.dirname(__file__), "file_index.json"),
+        ]
+        subprocess.run(move_cmd, check=True)
+        # Clean up
+        cleanup_cmd = ["rm", "-rf", "/tmp/IntuneBuddy.zip", "/tmp/IntuneBuddy-main"]
+        subprocess.run(cleanup_cmd, check=True)
+        print("\n✅ Vector store downloaded successfully.\n")
+    else:
+        print(
+            "\n[yellow]Vector store will be built. This will take a while...[/yellow]\n"
+        )
+
+
+if not os.path.exists(db_location):
+    download_vector_store()
 
 vectore_store = Chroma(
     collection_name="Intune_docs",
