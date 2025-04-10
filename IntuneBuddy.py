@@ -67,10 +67,29 @@ def main():
         text=True,
     )
     if args.model not in output.stdout:
-        print(
-            f"[red]Model is not installed. Please install it by running 'ollama pull {args.model}'[/red]"
+        install_cmd = ["ollama", "pull", args.model]
+        should_install = input(
+            f"\n{args.model} model is not installed. Do you want to install it? (y/n): "
         )
-        sys.exit(1)
+        if should_install.lower() == "y":
+            subprocess.run(install_cmd)
+        else:
+            print(
+                f"[red]Model is not installed. Please install it by running 'ollama pull {args.model}'[/red]"
+            )
+            sys.exit(1)
+    if "mxbai-embed-large" not in output.stdout:
+        install_cmd = ["ollama", "pull", "mxbai-embed-large"]
+        should_install = input(
+            "\nnmxbai-embed-large model is not installed. Do you want to install it? (y/n): "
+        )
+        if should_install.lower() == "y":
+            subprocess.run(install_cmd)
+        else:
+            print(
+                "[red]mxbai-embed-large model is not installed. Please install it by running 'ollama pull mxbai-embed-large'[/red]"
+            )
+            sys.exit(1)
 
     # model = OllamaLLM(model="deepseek-r1:8b")
     from vector import retreiver

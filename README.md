@@ -74,7 +74,10 @@ intune-buddy --model <model-name>
 - It will not invent answers or guess things not in the docs.
 - If the information isn’t found, it will tell you.
 - It automatically updates the vector database when Intune documentation changes.
-- 
+- All processing happens locally on your machine — no data is sent to the cloud. 
+    - Because of this, your hardware needs to be capable of running the model. By default, the chatbot uses the `gemma3:12b` model, which is a 12-billion-parameter model and requires fairly powerful hardware.
+    - If you experience performance issues, you can switch to a smaller model like `gemma3:4b`, which requires significantly less resources. However, keep in mind that using a smaller model may impact the quality of the answers.
+
 Remember: **the chatbot is only as good as the documentation it is trained on**.
 
 - If the official documentation is **poorly structured** or **contains incorrect information**, the chatbot will also provide **poor or incorrect results**.

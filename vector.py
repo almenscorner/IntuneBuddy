@@ -66,7 +66,7 @@ def download_vector_store():
         ]
         subprocess.run(move_cmd, check=True)
         # Clean up
-        cleanup_cmd = ["rm", "-rf", "/tmp/IntuneBuddy.zip", "/tmp/IntuneBuddy-main"]
+        cleanup_cmd = ["rm", "-rf", "/tmp/IntuneBuddy.zip", "/tmp/IntuneBuddy"]
         subprocess.run(cleanup_cmd, check=True)
         print("\n✅ Vector store downloaded successfully.\n")
     else:
@@ -236,6 +236,6 @@ with open(index_file, "w") as f:
     json.dump(file_index, f, indent=2)
 
 retreiver = vectore_store.as_retriever(
-    search_type="mmr",
-    search_kwargs={"k": 5, "fetch_k": 1000},
+    search_type="similarity",
+    search_kwargs={"k": 8},
 )
