@@ -3,6 +3,9 @@ import subprocess
 import json
 import sys
 import hashlib
+import requests
+import shutil
+import zipfile
 
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
@@ -40,34 +43,44 @@ def download_vector_store():
         .lower()
     )
     if download == "y":
-        curl_cmd = [
-            "curl",
-            "-L",
-            "-o",
-            "/tmp/IntuneBuddy.zip",
-            "https://github.com/almenscorner/dummy/releases/download/v0.0.1/vector_store.zip",
-        ]
-        subprocess.run(curl_cmd, check=True)
-        # Unzip the downloaded file
-        unzip_cmd = ["unzip", "/tmp/IntuneBuddy.zip", "-d", "/tmp/IntuneBuddy"]
-        subprocess.run(unzip_cmd, check=True, capture_output=True)
-        # Move the vector store to the current directory
-        move_cmd = [
-            "mv",
-            "/tmp/IntuneBuddy/chroma_db",
+        # Paths
+        tmp_dir = (
+            os.path.join(os.path.expanduser("~"), "AppData", "Local", "Temp")
+            if os.name == "nt"
+            else "/tmp"
+        )
+        zip_path = os.path.join(tmp_dir, "IntuneBuddy.zip")
+        extract_dir = os.path.join(tmp_dir, "IntuneBuddy")
+
+        # Download the zip file
+        url = "https://github.com/almenscorner/dummy/releases/download/v0.0.1/vector_store.zip"
+        print(f"\n⬇️ Downloading from {url}...")
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(zip_path, "wb") as f:
+            f.write(response.content)
+
+        # Unzip the file
+        print("\n📦 Unzipping...")
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(extract_dir)
+
+        # Move files
+        print("\n📂 Moving files...")
+        shutil.move(
+            os.path.join(extract_dir, "chroma_db"),
             os.path.join(os.path.dirname(__file__), "chroma_db"),
-        ]
-        subprocess.run(move_cmd, check=True)
-        # Move file_index.json to the current directory
-        move_cmd = [
-            "mv",
-            "/tmp/IntuneBuddy/file_index.json",
+        )
+        shutil.move(
+            os.path.join(extract_dir, "file_index.json"),
             os.path.join(os.path.dirname(__file__), "file_index.json"),
-        ]
-        subprocess.run(move_cmd, check=True)
-        # Clean up
-        cleanup_cmd = ["rm", "-rf", "/tmp/IntuneBuddy.zip", "/tmp/IntuneBuddy"]
-        subprocess.run(cleanup_cmd, check=True)
+        )
+
+        # Cleanup
+        print("\n🧹 Cleaning up...")
+        os.remove(zip_path)
+        shutil.rmtree(extract_dir)
+
         print("\n✅ Vector store downloaded successfully.\n")
     else:
         print(
@@ -98,11 +111,17 @@ documents = []
 ids = []
 
 
+def normalize_path(path):
+    """Normalize file paths to always use forward slashes."""
+    return path.replace("\\", "/")
+
+
 def hash_file(filepath):
-    """Return SHA256 hash of file contents."""
+    """Return SHA256 hash of file contents with normalized line endings."""
     hasher = hashlib.sha256()
     with open(filepath, "rb") as f:
         buf = f.read()
+        buf = buf.replace(b"\r\n", b"\n")  # Normalize CRLF to LF
         hasher.update(buf)
     return hasher.hexdigest()
 
@@ -122,7 +141,9 @@ def get_intune_docs():
             for filename in files:
                 if filename.endswith(".md"):
                     file_path = os.path.join(root, filename)
-                    relative_path = os.path.relpath(file_path, start=base_dir)
+                    relative_path = normalize_path(
+                        os.path.relpath(file_path, start=base_dir)
+                    )
                     file_hash = hash_file(file_path)
 
                     # ❗️Check hash BEFORE opening the file
@@ -198,6 +219,7 @@ def ensure_intunedocs_up_to_date():
                 check=True,
                 capture_output=True,
             )
+
             print("✅ IntuneDocs cloned successfully.\n")
         except subprocess.CalledProcessError:
             print(
@@ -236,6 +258,6 @@ with open(index_file, "w") as f:
     json.dump(file_index, f, indent=2)
 
 retreiver = vectore_store.as_retriever(
-    search_type="similarity",
-    search_kwargs={"k": 8},
+    search_type="similarity_score_threshold",
+    search_kwargs={"score_threshold": 0.4, "k": 8},
 )

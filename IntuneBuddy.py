@@ -128,6 +128,8 @@ def main():
     If the user’s question is incomplete, unclear, or appears to contain typos, politely ask for clarification (e.g., "Could you please clarify your question or provide more details so I can assist you better with Intune-related information?").
 
     If the provided Intune documentation appears outdated relative to the current date (April 10, 2025, or later), note this in the response (e.g., "Based on the provided documentation dated [date], ... However, this may not reflect the latest Intune updates.").
+    
+    If the answer is considered extremely basic and universally accepted Intune behavior (e.g., “Can I assign a policy to a device group?”), you may respond using common sense, but you must clearly state: “This information is based on general Intune behavior and not from the provided documentation.”
 
     Here is the previous history of the conversation: {history}. If no history is provided, assume this is the start of the conversation.
     Here is the relevant Intune documentation: {Intune_docs}. If no documentation is provided, respond: "I don’t have access to the relevant Intune documentation to answer your question accurately. Please provide the documentation or refine your question."
@@ -237,12 +239,47 @@ def main():
                         "Intune_docs": Intune_docs,
                         "question": question,
                         "history": history,
-                        "metadata_source": docs[0]
-                        .metadata["source"]
-                        .removesuffix(".md"),
+                        "metadata_source": (
+                            docs[0].metadata["source"].removesuffix(".md")
+                            if len(docs) > 0
+                            else ""
+                        ),
                     }
                 )
                 result = clean_output(result)
+
+                fallback_response = (
+                    "I don’t have access to the relevant Intune documentation to answer your question accurately. "
+                    "Please provide the documentation or refine your question."
+                )
+
+                if result == fallback_response:
+                    retries = 0
+                    while retries < 5:
+                        retries += 1
+                        result = chain.invoke(
+                            {
+                                "Intune_docs": Intune_docs,
+                                "question": question,
+                                "history": history,
+                                "metadata_source": (
+                                    docs[0].metadata["source"].removesuffix(".md")
+                                    if docs
+                                    else ""
+                                ),
+                            }
+                        )
+                        if args.debug:
+                            print(f"[yellow]⚠️ Retrying... Attempt {retries}[/yellow]")
+                        result = clean_output(result)
+
+                        if result != fallback_response:
+                            if retries > 0:
+                                if args.debug:
+                                    print(
+                                        f"[yellow]⚠️ Had to retry {retries} times to get a proper answer.[/yellow]"
+                                    )
+                            break
 
             console.print(
                 Panel.fit(

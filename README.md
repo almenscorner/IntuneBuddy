@@ -31,8 +31,10 @@ https://github.com/user-attachments/assets/52dadf3f-ee20-46c9-b92e-dd060d928ed7
 
 ## 🚀 Requirements
 
-- Python 3.9+
+- Python 3.9+ (3.13 unsupported).
 - [Ollama](https://ollama.com/) installed and running locally.
+- [Git](https://git-scm.com/) installed.
+- On Windows, Microsoft Visual C++ 14.0 or greater is required. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/.
 
 ---
 
@@ -42,6 +44,7 @@ Clone this repository:
 
 ```bash
 git clone https://github.com/almenscorner/IntuneBuddy.git
+
 cd IntuneBuddy
 
 pip install -e .
@@ -93,9 +96,9 @@ Thanks for understanding! 🙌
 
 ## 🤖 What’s Going on Behind the Scenes?
 
-When you run Intune Buddy or Munki Buddy, a lot happens automatically to give you a smooth experience:
+When you run Intune Buddy, a lot happens automatically to give you a smooth experience:
 1.	Documentation Sync
-    - The chatbot checks if the documentation repository (MunkiDocs/ or IntuneDocs/) exists.
+    - The chatbot checks if the documentation repository exists.
     - If not, it clones the official documentation from GitHub.
     - If it already exists, it pulls the latest changes to ensure you always have up-to-date docs.
 2.	Document Indexing
