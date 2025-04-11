@@ -25,7 +25,7 @@ It uses local Intune documentation files and a lightweight AI model to answer yo
 
 ## :clapper: Demo
 
-https://github.com/user-attachments/assets/52dadf3f-ee20-46c9-b92e-dd060d928ed7
+https://github.com/user-attachments/assets/325750da-cc0c-4109-b5b8-5bccc730bef1
 
 ---
 
