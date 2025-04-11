@@ -1,0 +1,29 @@
+name: 💡 Feature Request
+description: Suggest a new idea or feature
+title: "[FEATURE] "
+labels: [feature request]
+body:
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature description
+      description: Describe the feature you'd like to see.
+      placeholder: "It would be great if..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why is this feature needed?
+      description: Explain why this feature would be helpful.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add anything else you think is important (optional).
+    validations:
+      required: false
