@@ -4,6 +4,7 @@ import os
 import sys
 import re
 import subprocess
+import pyperclip
 
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
@@ -140,6 +141,8 @@ def main():
 
     chain = chat_prompt | model
 
+    buddy_string = "[bold blue]🤖 Buddy:[/bold blue]"
+
     def clean_output(output: str) -> str:
         """
         Cleans the LLM output by removing unwanted patterns and unnecessary greetings.
@@ -164,7 +167,6 @@ def main():
 
     def ascii_munki_buddy_logo():
         logo = r"""
------------------------------------------------------------
  ___       _                    ____            _     _       
 |_ _|_ __ | |_ _   _ _ __   ___| __ ) _   _  __| | __| |_   _ 
  | || '_ \| __| | | | '_ \ / _ \  _ \| | | |/ _` |/ _` | | | |
@@ -173,17 +175,22 @@ def main():
                                                         |___/ 
 
 🤖  Intune Buddy - Documentation Assistant
------------------------------------------------------------
         """
-        print(logo)
+        print(
+            f"""
+-------------------------------------------------------------
+[bold blue]{logo}[/bold blue]
+-------------------------------------------------------------
+              """
+        )
 
     ascii_munki_buddy_logo()
-    print("\nHi, I'm Intune Buddy!")
+    print("\nHi, I'm [bold blue]Intune Buddy[/bold blue]!")
     print("\n")
     print("I will help you find information about Intune using the documentation.")
     print("You can ask any question related to Intune.")
     print("\n")
-    print("To quit, type 'q' or 'bye'.")
+    print("To quit, type 'q' or 'bye'.\n")
     if args.debug:
         print(
             "\n[yellow]Debug mode is enabled. Debug information will be displayed.[/yellow]"
@@ -194,7 +201,7 @@ def main():
 
     try:
         while True:
-            print("\n")
+            print()
             style = Style.from_dict(
                 {
                     "prompt": "bold yellow",  # color the prompt
@@ -202,10 +209,19 @@ def main():
             )
 
             question = prompt("🧑 You: ", style=style, history=prompt_history)
-            print("\n")
             if question.lower() in ["q", "bye"]:
-                print("🤖: Goodbye!\n")
+                print(f"\n{buddy_string} Goodbye!\n")
                 break
+
+            # print("\n")
+
+            if question.lower() == "copy":
+                if not history:
+                    print(f"\n{buddy_string} No conversation history to copy.")
+                    continue
+                pyperclip.copy(history[-1])
+                print(f"\n{buddy_string} Last message copied to clipboard.")
+                continue
 
             with console.status("Searching documentation...", spinner="dots"):
                 if args.debug:
@@ -217,7 +233,7 @@ def main():
                             border_style="yellow",
                         )
                     )
-
+                print()
                 # retriever = create_retriever(question)
                 docs = retreiver.invoke(question)
                 if args.debug:
@@ -281,19 +297,13 @@ def main():
                                     )
                             break
 
-            console.print(
-                Panel.fit(
-                    Markdown(result),
-                    title="🤖 Buddy",
-                    title_align="left",
-                    border_style="green",
-                )
-            )
+            console.print(buddy_string, end=" ")
+            console.print(Markdown(result))
             history.append(f"User: {question}")
             history.append(f"Buddy: {result}")
 
     except KeyboardInterrupt:
-        print("🤖 Buddy: Operation cancelled by user. Exiting gracefully... 👋")
+        print(f"{buddy_string} Operation cancelled by user. Exiting gracefully... 👋")
         sys.exit(0)
 
 

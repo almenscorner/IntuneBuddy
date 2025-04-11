@@ -70,6 +70,14 @@ Or even change the model used:
 intune-buddy --model <model-name>
 ```
 
+To copy the last message from the chatbot to your clipboard, just type `copy` in the chat.
+```bash
+🧑 You: copy
+
+🤖 Buddy: Last message copied to clipboard.
+```
+> **Note**: The chatbot will only copy the last message from the chatbot to your clipboard. It will not copy any other messages or context.
+
 ---
 
 ## ⚠️ Important Notes
