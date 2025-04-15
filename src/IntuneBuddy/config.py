@@ -1,4 +1,12 @@
+import os
+import json
+
 from rich import print
+from rich.markdown import Markdown
+
+CONFIG_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "userconfig.json"
+)
 
 
 def template():
@@ -61,3 +69,106 @@ def ascii_art():
 -------------------------------------------------------------
               """
     )
+
+
+def config_file_exists():
+    if os.path.exists(CONFIG_FILE):
+        return True
+    return False
+
+
+def load_config():
+    try:
+        with open(CONFIG_FILE, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def save_config(data):
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+
+def get_user_emoji():
+    data = load_config()
+
+    return data.get("user_emoji", "🧑")
+
+
+def get_user_name():
+    data = load_config()
+
+    return data.get("user_name", "You")
+
+
+def get_user_color():
+    data = load_config()
+
+    return data.get("user_color", "yellow")
+
+
+def set_user_emoji():
+    emoji = input("\nPlease enter your preferred emoji (leave empty for 🧑): ") or "🧑"
+    data = load_config()
+    data["user_emoji"] = emoji
+    save_config(data)
+    return emoji
+
+
+def set_user_name():
+    name = input("\nPlease enter your name (leave empty for 'You'): ") or "You"
+    data = load_config()
+    data["user_name"] = name
+    save_config(data)
+    return name
+
+
+def set_user_color():
+    color = (
+        input("\nPlease enter your preferred color (leave empty for 'yellow'): ")
+        or "yellow"
+    )
+    data = load_config()
+    color = color.lower().replace(" ", "")
+    data["user_color"] = color
+    save_config(data)
+    return color
+
+
+def handle_question(question, buddy_string, user_name, user_emoji, user_color):
+    if question == "set emoji":
+        user_emoji = set_user_emoji()
+    elif question == "set name":
+        user_name = set_user_name()
+    elif question == "set color":
+        user_color = set_user_color()
+    elif question == "clear config":
+        if os.path.exists(CONFIG_FILE):
+            os.remove(CONFIG_FILE)
+        print(f"\n{buddy_string} Config cleared.")
+        user_name = "You"
+        user_emoji = "🧑"
+        user_color = "yellow"
+    elif question == "show config":
+        print(f"\n{buddy_string} Current config,")
+        print(
+            Markdown(
+                f"- User Name: {user_name}\n"
+                f"- User Emoji: {user_emoji}\n"
+                f"- User Color: {user_color}"
+            )
+        )
+    elif question == "config help":
+        print(f"\n{buddy_string} Configuration commands,")
+        print(
+            Markdown(
+                "- `set emoji` – Set your preferred emoji\n"
+                "- `set name` – Set your name\n"
+                "- `set color` – Set your preferred color\n"
+                "- `clear config` – Clear all settings\n"
+                "- `show config` – Show current settings"
+            )
+        )
+
+    return user_name, user_emoji, user_color

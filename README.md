@@ -78,6 +78,63 @@ To copy the last message from the chatbot to your clipboard, just type `copy` in
 ```
 > **Note**: The chatbot will only copy the last message from the chatbot to your clipboard. It will not copy any other messages or context.
 
+Configuration options,
+
+`config help` will show you all available options:
+```bash
+🧑 You: config help
+
+🤖 Buddy: Configuration commands,
+
+ • set emoji – Set your preferred emoji                                                                               
+ • set name – Set your name                                                                                 
+ • set color – Set your preferred color                                                                               
+ • clear config – Clear all settings                                                                              
+ • show config – Show current settings  
+```
+
+`show config` will show you the current settings:
+```bash
+🧑 You: show config
+
+🤖 Buddy: Current config,
+
+ • User Name: You                                                                                   
+ • User Emoji: 🧑                                                                                    
+ • User Color: yellow 
+```
+
+`clear config` will clear all settings:
+```bash
+🧑 You: clear config
+
+🤖 Buddy: All settings cleared.
+```
+
+`set emoji` lets you configure the emoji for you
+```bash
+🧑 You: set emoji
+
+Please enter your preferred emoji (leave empty for 🧑): 😈
+
+😈 You:
+```
+
+`set name` lets you configure you're name
+```bash
+😈 You: set name
+
+Please enter your name (leave empty for 'You'): Mr Awesome
+
+😈 Mr Awesome:
+```
+
+`set color` lets you configure the color of your name
+```bash
+😈 Mr Awesome: set color
+
+Please enter your preferred color (leave empty for 'yellow'): cyan
+```
 ---
 
 ## ⚠️ Important Notes

@@ -178,3 +178,4 @@ cython_debug/
 chroma_db/
 IntuneDocs/
 file_index.json
+userconfig.json

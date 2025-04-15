@@ -22,7 +22,16 @@ from .utils import (
     ensure_ollama_installed,
     ensure_git_installed,
 )
-from .config import template, ascii_art
+from .config import (
+    CONFIG_FILE,
+    template,
+    ascii_art,
+    get_user_emoji,
+    get_user_color,
+    get_user_name,
+    config_file_exists,
+    handle_question,
+)
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -54,7 +63,10 @@ def main():
     ensure_model_installed(args.model)
     ensure_model_installed("mxbai-embed-large")
 
-    # model = OllamaLLM(model="deepseek-r1:8b")
+    user_emoji = get_user_emoji() if config_file_exists() else "🧑"
+    user_name = get_user_name() if config_file_exists() else "You"
+    user_color = get_user_color() if config_file_exists() else "yellow"
+
     from .vector import retreiver
 
     model = OllamaLLM(model=args.model)
@@ -88,13 +100,21 @@ def main():
     try:
         while True:
             print()
-            style = Style.from_dict(
-                {
-                    "prompt": "bold yellow",  # color the prompt
-                }
-            )
+            try:
+                style = Style.from_dict(
+                    {
+                        "prompt": f"bold {user_color}",  # color the prompt
+                    }
+                )
+            except ValueError:
+                print(
+                    f"[red]Invalid color '{user_color}' specified. Using default color.[/red]\n"
+                )
+                style = Style.from_dict({"prompt": "bold yellow"})
 
-            question = prompt("🧑 You: ", style=style, history=prompt_history)
+            question = prompt(
+                f"{user_emoji} {user_name}: ", style=style, history=prompt_history
+            )
             if question.lower() in ["q", "bye"]:
                 print(f"\n{buddy_string} Goodbye!\n")
                 # stop running ollama model
@@ -109,6 +129,21 @@ def main():
                 print(f"\n{buddy_string} Last message copied to clipboard.")
                 continue
 
+            config_commands = [
+                "set emoji",
+                "set name",
+                "set color",
+                "clear config",
+                "show config",
+                "config help",
+            ]
+
+            if question.lower() in config_commands:
+                user_name, user_emoji, user_color = handle_question(
+                    question.lower(), buddy_string, user_name, user_emoji, user_color
+                )
+                continue
+
             with console.status("Searching documentation...", spinner="dots"):
                 if args.debug:
                     console.print(
@@ -120,7 +155,6 @@ def main():
                         )
                     )
                 print()
-                # retriever = create_retriever(question)
                 docs = retreiver.invoke(question)
                 if args.debug:
                     for doc in docs:
