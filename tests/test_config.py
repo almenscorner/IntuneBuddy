@@ -50,9 +50,10 @@ def test_save_config():
     }
     with patch("builtins.open", mock_open()) as mocked_file:
         with patch("json.dump") as mock_dump:
-            save_config(config_data)
-            mocked_file.assert_called_once_with(CONFIG_FILE, "w")
-            mock_dump.assert_called_once_with(config_data, mocked_file(), indent=4)
+            with patch("IntuneBuddy.config.save_config", return_value=None):
+                save_config(config_data)
+                mocked_file.assert_called_once_with(CONFIG_FILE, "w")
+                mock_dump.assert_called_once_with(config_data, mocked_file(), indent=4)
 
 
 def test_config_file_exists():
@@ -90,25 +91,31 @@ def test_get_user_name():
 def test_set_user_emoji():
     # Test setting user emoji
     with patch("builtins.input", return_value="😊"):
-        emoji = set_user_emoji()
-        assert emoji == "😊"
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            emoji = set_user_emoji()
+            assert emoji == "😊"
+            mock_save.assert_called_once()
 
     # Test setting user emoji with empty input
     with patch("builtins.input", return_value=""):
-        emoji = set_user_emoji()
-        assert emoji == "🧑"
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            emoji = set_user_emoji()
+            assert emoji == "🧑"
 
 
 def test_set_user_name():
     # Test setting user name
     with patch("builtins.input", return_value="Zoey"):
-        name = set_user_name()
-        assert name == "Zoey"
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            name = set_user_name()
+            assert name == "Zoey"
+            mock_save.assert_called_once()
 
     # Test setting user name with empty input
     with patch("builtins.input", return_value=""):
-        name = set_user_name()
-        assert name == "You"
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            name = set_user_name()
+            assert name == "You"
 
 
 def test_get_user_color():
@@ -126,13 +133,16 @@ def test_get_user_color():
 def test_set_user_color():
     # Test setting user color
     with patch("builtins.input", return_value="blue"):
-        color = set_user_color()
-        assert color == "blue"
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            color = set_user_color()
+            assert color == "blue"
+            mock_save.assert_called_once()
 
     # Test setting user color with empty input
     with patch("builtins.input", return_value=""):
-        color = set_user_color()
-        assert color == "yellow"
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            color = set_user_color()
+            assert color == "yellow"
 
 
 def test_clear_config():
@@ -154,28 +164,31 @@ def test_clear_config_file_not_exists():
 def test_handle_question_set_emoji():
     # Test setting emoji
     with patch("builtins.input", return_value="😊"):
-        name, emoji, color = handle_question(
-            "set emoji", "🤖 Buddy:", "You", "😊", "yellow"
-        )
-        assert ("You", "😊", "yellow") == (name, emoji, color)
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            name, emoji, color = handle_question(
+                "set emoji", "🤖 Buddy:", "You", "😊", "yellow"
+            )
+            assert ("You", "😊", "yellow") == (name, emoji, color)
 
 
 def test_handle_question_set_name():
     # Test setting name
     with patch("builtins.input", return_value="Zoey"):
-        name, emoji, color = handle_question(
-            "set name", "🤖 Buddy:", "You", "😊", "yellow"
-        )
-        assert ("Zoey", "😊", "yellow") == (name, emoji, color)
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            name, emoji, color = handle_question(
+                "set name", "🤖 Buddy:", "You", "😊", "yellow"
+            )
+            assert ("Zoey", "😊", "yellow") == (name, emoji, color)
 
 
 def test_handle_question_set_color():
     # Test setting color
     with patch("builtins.input", return_value="blue"):
-        name, emoji, color = handle_question(
-            "set color", "🤖 Buddy:", "You", "😊", "yellow"
-        )
-        assert ("You", "😊", "blue") == (name, emoji, color)
+        with patch("IntuneBuddy.config.save_config") as mock_save:
+            name, emoji, color = handle_question(
+                "set color", "🤖 Buddy:", "You", "😊", "yellow"
+            )
+            assert ("You", "😊", "blue") == (name, emoji, color)
 
 
 def test_show_config():

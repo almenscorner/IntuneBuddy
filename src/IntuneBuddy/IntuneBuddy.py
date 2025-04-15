@@ -114,7 +114,7 @@ def main():
 
             question = prompt(
                 f"{user_emoji} {user_name}: ", style=style, history=prompt_history
-            )
+            ).strip()
             if question.lower() in ["q", "bye"]:
                 print(f"\n{buddy_string} Goodbye!\n")
                 # stop running ollama model
