@@ -4,5 +4,6 @@ langchain_ollama==0.3.1
 langchain_text_splitters==0.3.8
 prompt_toolkit==3.0.50
 pyperclip==1.9.0
+pytest==8.3.5
 Requests==2.32.3
 rich==14.0.0

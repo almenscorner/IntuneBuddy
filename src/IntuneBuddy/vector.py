@@ -198,15 +198,6 @@ def add_documents_in_batches(vector_store, documents, ids):
     print("\n✅ All content have been added to the vector database successfully!\n")
 
 
-"""git_cmd = ["git", "pull"]
-output = subprocess.run(
-    git_cmd,
-    cwd=os.path.join(os.path.dirname(__file__), "IntuneDocs"),
-    capture_output=True,
-    text=True,
-)"""
-
-
 def ensure_intunedocs_up_to_date():
     repo_url = "https://github.com/MicrosoftDocs/memdocs.git"
     docs_dir = os.path.join(os.path.dirname(__file__), "IntuneDocs")
