@@ -136,6 +136,8 @@ Please enter your name (leave empty for 'You'): Mr Awesome
 😈 Mr Awesome: set color
 
 Please enter your preferred color (leave empty for 'yellow'): cyan
+
+😈 Mr Awesome: (Mr Awesome will now be cyan)
 ```
 ---
 
@@ -179,6 +181,38 @@ When you run Intune Buddy, a lot happens automatically to give you a smooth expe
     -	When you ask a question, the chatbot first retrieves the most relevant documentation chunks.
     -	It then feeds your question plus the retrieved content into a locally running language model (Gemma 3B or 12B).
     -	The model generates a complete answer based only on what is found in the official documentation.
+
+### 🗺️ Process Overview (Diagram)
+```mermaid
+flowchart TD
+    classDef setup fill:#cce5ff,stroke:#004085,color:#000,stroke-width:2px;
+    classDef startup fill:#d4edda,stroke:#155724,color:#000,stroke-width:2px;
+    classDef chat fill:#fff3cd,stroke:#856404,color:#000,stroke-width:2px;
+    %% Setup Phase (First run only)
+    subgraph Setup Phase
+        S1[📦 Vector DB exists?]:::setup -->|No| S2[⬇️ Download or 🧱 Build Vector DB]:::setup
+        S2 --> S3[📁 Clone docs repo]:::setup
+        S3 --> CH1[➡️ Go to Chat Phase]:::setup
+        S1 -->|Yes| ST1[➡️ Go to Startup Phase]:::setup
+    end
+
+    %% Startup Phase (Subsequent runs)
+    subgraph Startup Phase
+        ST1 --> U1[🔄 Pull latest doc changes]:::startup
+        U1 --> U2{📄 File hash index changed?}:::startup
+        U2 -- Yes --> U3[✂️ Re-index changed docs]:::startup --> U4[📦 Update vector DB]:::startup --> CH2[➡️ Go to Chat Phase]:::startup
+        U2 -- No --> CH2
+    end
+
+    %% Chat Phase
+    subgraph Chat Phase
+        CH1 --> Q1[🙋‍♂️ User asks a question]:::chat
+        CH2 --> Q1
+        Q1 --> Q2[📡 Query vector DB]:::chat
+        Q2 --> Q3[🧩 Retrieve matching chunks]:::chat
+        Q3 --> Q4[🧠 LLM generates response]:::chat
+    end
+```
 
 ---
 
