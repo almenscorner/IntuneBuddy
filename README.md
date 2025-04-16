@@ -1,4 +1,4 @@
-![intunebuddylogo](https://github.com/user-attachments/assets/c6484b63-0652-4772-b28b-24635d7e29e9)
+![buddylogo](https://github.com/user-attachments/assets/cbe8f885-8b16-4f8a-beeb-a0783e5e72cc)
 
 **Intune Buddy** is a simple documentation chatbot that helps you find answers about [Intune](https://learn.microsoft.com/intune).  
 It uses local Intune documentation files and a lightweight AI model to answer your questions accurately.
