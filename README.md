@@ -44,6 +44,8 @@ Clone this repository:
 
 ```bash
 git clone https://<your-username>:<your-token>@github.com/almenscorner/IntuneBuddy.git
+OR
+Download the code as a ZIP file and extract it.
 
 cd IntuneBuddy
 
