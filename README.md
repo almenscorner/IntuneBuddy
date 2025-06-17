@@ -43,7 +43,7 @@ https://github.com/user-attachments/assets/325750da-cc0c-4109-b5b8-5bccc730bef1
 Clone this repository:
 
 ```bash
-git clone https://<your-username>:<your-token>@github.com/almenscorner/IntuneBuddy.git
+git clone https://github.com/almenscorner/IntuneBuddy.git
 OR
 Download the code as a ZIP file and extract it.
 

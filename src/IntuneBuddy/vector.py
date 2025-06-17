@@ -53,7 +53,7 @@ def download_vector_store():
         extract_dir = os.path.join(tmp_dir, "IntuneBuddy")
 
         # Download the zip file
-        url = "https://github.com/almenscorner/dummy/releases/download/v0.0.1/vector_store.zip"
+        url = "https://github.com/almenscorner/IntuneBuddy/releases/download/v0.0.1/vector_store.zip"
         print(f"\n⬇️ Downloading from {url}...")
         response = requests.get(url)
         response.raise_for_status()
@@ -192,8 +192,12 @@ def add_documents_in_batches(vector_store, documents, ids):
         for i in range(0, len(documents), BATCH_SIZE):
             batch_docs = documents[i : i + BATCH_SIZE]
             batch_ids = ids[i : i + BATCH_SIZE]
-            vector_store.add_documents(documents=batch_docs, ids=batch_ids)
-            progress.update(task, advance=len(batch_docs))
+            try:
+                vector_store.add_documents(documents=batch_docs, ids=batch_ids)
+                progress.update(task, advance=len(batch_docs))
+            except Exception as e:
+                print(f"[red]Error adding batch {i // BATCH_SIZE + 1}: {e}[/red]")
+                continue
 
     print("\n✅ All content have been added to the vector database successfully!\n")
 
